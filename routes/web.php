@@ -21,6 +21,8 @@ Route::get('/', function () {
 
 Route::resource('kelompok-tani', 'App\Http\Controllers\KelompokTaniController');
 Route::resource('petani', 'App\Http\Controllers\PetaniController');
+Route::resource('pupuk', 'App\Http\Controllers\PupukController');
+Route::resource('komoditas', 'App\Http\Controllers\KomoditasController');
 
 Route::prefix('dropdown')->controller(DropdownController::class)->as('dropdown.')->group(function () {
     Route::get('kelompok-tani', 'getKelompokTani')->name('kelompok-tani');

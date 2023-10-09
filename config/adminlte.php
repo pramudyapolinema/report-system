@@ -361,12 +361,12 @@ return [
                     'route'  => 'petani.index',
                 ],
                 [
-                    'text' => 'Rekap Tahunan',
-                    'url'  => '#',
+                    'text' => 'Pupuk',
+                    'route'  => 'pupuk.index',
                 ],
                 [
-                    'text' => 'Hutang Pelanggan',
-                    'url'  => '#',
+                    'text' => 'Komoditas',
+                    'route'  => 'komoditas.index',
                 ],
             ],
         ],

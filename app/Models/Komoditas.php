@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Komoditas extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'name',
+    ];
 }

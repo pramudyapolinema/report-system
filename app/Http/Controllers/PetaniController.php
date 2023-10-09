@@ -27,7 +27,6 @@ class PetaniController extends Controller
                     $button .= '&nbsp;&nbsp;';
                     $button .= '<button type="button" id="deleteButton" data-id="' . $petani->id . '" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>';
                     return $button;
-                    return $button;
                 })
                 ->rawColumns(['actions'])
                 ->addIndexColumn()

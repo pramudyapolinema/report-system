@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Pupuk;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PupukController extends Controller
 {
@@ -14,7 +15,21 @@ class PupukController extends Controller
      */
     public function index()
     {
-        //
+        // make index like other controller but this with Pupuk Model
+        if (request()->ajax()) {
+            $pupuk = Pupuk::all();
+            return datatables()->of($pupuk)
+                ->addColumn('actions', function ($pupuk) {
+                    $button = '<button type="button" id="editButton" data-id="' . $pupuk->id . '" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editPupukModal"><i class="fa fa-edit"></i></button>';
+                    $button .= '&nbsp;&nbsp;';
+                    $button .= '<button type="button" id="deleteButton" data-id="' . $pupuk->id . '" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>';
+                    return $button;
+                })
+                ->rawColumns(['actions'])
+                ->addIndexColumn()
+                ->make(true);
+        }
+        return view('pupuk.index');
     }
 
     /**
@@ -35,7 +50,26 @@ class PupukController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $request->validate([
+                'name' => 'required',
+            ]);
+
+            Pupuk::create([
+                'name' => $request->name,
+            ]);
+
+            DB::commit();
+            return response()->json([
+                'message' => 'Data berhasil disimpan'
+            ], 200);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                'message' => $th->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -55,9 +89,10 @@ class PupukController extends Controller
      * @param  \App\Models\Pupuk  $pupuk
      * @return \Illuminate\Http\Response
      */
-    public function edit(Pupuk $pupuk)
+    public function edit($id)
     {
-        //
+        $pupuk = Pupuk::findOrfail($id);
+        return response()->json($pupuk, 200);
     }
 
     /**
@@ -67,9 +102,26 @@ class PupukController extends Controller
      * @param  \App\Models\Pupuk  $pupuk
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Pupuk $pupuk)
+    public function update(Request $request, $id)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $pupuk = Pupuk::findOrfail($id);
+        $pupuk->update([
+            'name' => $request->name ?? $pupuk->name,
+        ]);
+
+        DB::commit();
+
+        return response()->json([
+            'message' => 'Data berhasil diupdate'
+        ], 200);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                'message' => $th->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -78,8 +130,21 @@ class PupukController extends Controller
      * @param  \App\Models\Pupuk  $pupuk
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Pupuk $pupuk)
+    public function destroy($id)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $pupuk = Pupuk::findOrfail($id);
+            $pupuk->delete();
+            DB::commit();
+            return response()->json([
+                'message' => 'Data berhasil dihapus'
+            ], 200);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                'message' => $th->getMessage()
+            ], 500);
+        }
     }
 }
